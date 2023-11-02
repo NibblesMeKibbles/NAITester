@@ -32,6 +32,12 @@ public partial class Game : Node2D {
 		LoadConfigJson();
 	}
 
+	public override void _Notification(int what) {
+		if (what == NotificationWMCloseRequest || what == NotificationWMGoBackRequest) {
+			ImageGen.CleanUp();
+		}
+	}
+
 	public static string GetUserConfigProperty(string pattern) {
 		if (!FileAccess.FileExists(userConfigPath)) {
 			return null;

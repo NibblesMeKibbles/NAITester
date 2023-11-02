@@ -41,6 +41,14 @@ public partial class ImageGen {
 		httpRequestImage.Timeout = 25.0;
 	}
 
+	public void CleanUp() {
+		httpRequestImage.CancelRequest();
+		if (FileAccess.FileExists(zipPath)) {
+			DirAccess dir = DirAccess.Open(Game.userRootPath);
+			dir.Remove(zipPath);
+		}
+	}
+
 	public void StartGeneration(bool resetIndex = true) {
 		if (!((LineEdit)Game.Instance.UI["ApiKey_LineEdit"]).Text.Contains("pst")) {
 			Game.CreateAlert("No valid API Key was provided.");
