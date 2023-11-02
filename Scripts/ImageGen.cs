@@ -139,6 +139,7 @@ public partial class ImageGen {
 				if (fileAccess.GetLength() < 1000) {
 					responseBody = fileAccess.GetAsText();
 				}
+				fileAccess.Close();
 			}
 			Game.CreateAlert("/api/generate-image" +
 				"\nHttpRequest Status: " + ((HttpRequest.Result)result).ToString() +
@@ -156,6 +157,7 @@ public partial class ImageGen {
 			}
 			else {
 				byte[] imageBytes = reader.ReadFile("image_0.png");
+				reader.Close();
 				if (imageBytes == null || imageBytes.Length == 0) {
 					Game.CreateAlert("Unzipped PNG file read failed" +
 						"\nError Code: " + error.ToString());
