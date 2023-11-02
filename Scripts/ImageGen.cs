@@ -282,7 +282,6 @@ public partial class ImageGen {
 			if (tagList.Remove(Images[index].Tag)) {
 				((TextEdit)Game.Instance.UI["TagList_TextEdit"]).Text = tagList.ToArray().Join("\n");
 			}
-			TagList.Remove(Images[index].Tag);
 			Images[index].Container?.QueueFree();
 			Images.Remove(index);
 			UpdateImageCounterLabel();
