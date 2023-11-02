@@ -218,6 +218,7 @@ public partial class ImageGen {
 						GenerateImage(ImageIndex);
 					}
 					else {
+						DisplayServer.WindowRequestAttention();
 						UpdateImageCounterLabel();
 						SetStatus(false);
 					}
