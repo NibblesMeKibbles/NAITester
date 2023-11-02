@@ -31,12 +31,14 @@ public partial class ImageGen {
 
 	private readonly HttpRequest httpRequestImage;
 	private bool httpBusy = false;
+	private readonly string zipPath = Game.userRootPath + "images.zip";
 
 	public ImageGen(Game game) {
 		Game = game;
+		zipPath = Game.userRootPath + "images-" + Random.Randi() + ".zip";
 
 		httpRequestImage = (HttpRequest)Game.UI["HTTPRequest_Image"];
-		httpRequestImage.DownloadFile = "user://images.zip";
+		httpRequestImage.DownloadFile = zipPath;
 		httpRequestImage.RequestCompleted += OnImageRequestCompleted;
 		httpRequestImage.Timeout = 25.0;
 	}
@@ -132,8 +134,8 @@ public partial class ImageGen {
 		httpBusy = false;
 		if (result != (long)HttpRequest.Result.Success || responseCode != 200) {
 			string responseBody = Encoding.UTF8.GetString(body);
-			if (FileAccess.FileExists("user://images.zip")) {
-				FileAccess fileAccess = FileAccess.Open("user://images.zip", FileAccess.ModeFlags.Read);
+			if (FileAccess.FileExists(zipPath)) {
+				FileAccess fileAccess = FileAccess.Open(zipPath, FileAccess.ModeFlags.Read);
 				if (fileAccess.GetLength() < 1000) {
 					responseBody = fileAccess.GetAsText();
 				}
@@ -146,7 +148,7 @@ public partial class ImageGen {
 		}
 		else {
 			ZipReader reader = new();
-			Error error = reader.Open("user://images.zip");
+			Error error = reader.Open(zipPath);
 			if (error != Error.Ok) {
 				Game.CreateAlert("Unzip image generation download failed" +
 					"\nError Code: " + error.ToString());
