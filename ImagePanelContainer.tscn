@@ -1,0 +1,68 @@
+[gd_scene load_steps=6 format=3 uid="uid://dukjrncps0j5r"]
+
+[ext_resource type="Theme" uid="uid://dcgm5meb0p4vu" path="res://Theme.tres" id="1_bksks"]
+[ext_resource type="Script" path="res://Scripts_UI/ImagePanelContainer.cs" id="1_timnc"]
+[ext_resource type="Texture2D" uid="uid://b628t12vno833" path="res://Icons/icons8-save-50.png" id="2_d8kw2"]
+[ext_resource type="Texture2D" uid="uid://irbwteqh02qh" path="res://Icons/icons8-delete-48.png" id="3_ro2qr"]
+[ext_resource type="Texture2D" uid="uid://37d2apnyks2x" path="res://Icons/icons8-reload-50.png" id="3_ukfju"]
+
+[node name="Image_PanelContainer" type="PanelContainer"]
+self_modulate = Color(1, 1, 1, 0.588235)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_timnc")
+
+[node name="Image_TextureRect" type="TextureRect" parent="."]
+texture_repeat = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+expand_mode = 4
+stretch_mode = 5
+
+[node name="Image_LineEdit" type="LineEdit" parent="."]
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_bksks")
+theme_override_colors/font_uneditable_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+placeholder_text = "[ Tag ]"
+editable = false
+expand_to_text_length = true
+flat = true
+select_all_on_focus = true
+
+[node name="Image_HBoxContaine" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="Reroll_Button" type="Button" parent="Image_HBoxContaine"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Reroll tag with new seed"
+mouse_filter = 1
+shortcut_in_tooltip = false
+icon = ExtResource("3_ukfju")
+expand_icon = true
+
+[node name="Save_Button" type="Button" parent="Image_HBoxContaine"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Save image (with metadata)"
+mouse_filter = 1
+shortcut_in_tooltip = false
+icon = ExtResource("2_d8kw2")
+expand_icon = true
+
+[node name="Delete_Button" type="Button" parent="Image_HBoxContaine"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Delete image and remove tag from Tag List"
+mouse_filter = 1
+shortcut_in_tooltip = false
+icon = ExtResource("3_ro2qr")
+expand_icon = true
