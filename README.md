@@ -8,12 +8,12 @@ The `config.json` is copied from the application content to the user directory w
 ## Functionality
 Provide a **Prompt** and **Undesired Content** in the appropriate text fields, **either or both** of the fields should contain the text: **`%TAG%`**. Given a list of tags (split by new lines) in the **Tag List** field, iterate over each tag to replace the string `%TAG%` with the tag to provide a series of images with variations according to the tag replacement text.
 
-*Example:*
-**Prompt:**
-1girl, {artist:%TAG%}
-**Tag List:**
-Aaron Douglas
-Adam Martinakis
+*Example:*<br >
+**Prompt:**<br >
+1girl, {artist:%TAG%}<br >
+**Tag List:**<br >
+Aaron Douglas<br >
+Adam Martinakis<br >
 Adolph Gottlieb
 
 Result: 3 images will be generated with the following prompts: `1girl, {artist:Aaron Douglas}`, `1girl, {artist:Adam Martinakis}`, and `1girl, {artist:Adolph Gottlieb}`.
