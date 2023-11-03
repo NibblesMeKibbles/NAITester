@@ -97,7 +97,7 @@ mouse_filter = 2
 texture = ExtResource("2_ypjq3")
 
 [node name="Resize_HSlider" type="HSlider" parent="CanvasLayer"]
-anchors_preset = -1
+anchors_preset = 10
 anchor_right = 1.0
 offset_left = -8.0
 offset_top = -8.0
@@ -115,7 +115,7 @@ value = 0.67
 scrollable = false
 
 [node name="Images_ScrollContainer" type="ScrollContainer" parent="CanvasLayer"]
-anchors_preset = -1
+anchors_preset = 9
 anchor_bottom = 1.0
 offset_top = 4.0
 offset_right = 770.0
@@ -131,7 +131,7 @@ size_flags_vertical = 3
 columns = 3
 
 [node name="Config_VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
-anchors_preset = -1
+anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
