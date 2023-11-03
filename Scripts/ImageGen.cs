@@ -20,6 +20,7 @@ public partial class ImageGen {
 	public bool IsRunning;
 	public int ImageIndex = 0;
 	public int RerollIndex = -1;
+	public int RetryCounter = 3;
 	public System.Collections.Generic.Dictionary<int, ImageContainer> Images = new();
 
 	public string Prompt;
@@ -97,6 +98,7 @@ public partial class ImageGen {
 
 		Random.Randomize();
 		SetStatus(true);
+		RetryCounter--;
 
 		string[] headers = new string[] {
 			"Authorization: Bearer " + ((LineEdit)Game.Instance.UI["ApiKey_LineEdit"]).Text,
@@ -121,11 +123,16 @@ public partial class ImageGen {
 		httpBusy = true;
 		Error error = httpRequestImage.Request(Game.ApiImage, headers, HttpClient.Method.Post, body);
 		if (error != Error.Ok) {
-			Game.CreateAlert("Failed to send HttpRequest" +
-				"\nURI: /api/generate-iamge" +
-				"\nError Code: " + error.ToString());
-			SetStatus(false);
-			httpBusy = false;
+			if (RetryCounter < 0) {
+				Game.CreateAlert("Failed to send HttpRequest" +
+					"\nURI: /api/generate-iamge" +
+					"\nError Code: " + error.ToString());
+				SetStatus(false);
+				httpBusy = false;
+			}
+			else {
+				GenerateImage(index, forceRandomSeed);
+			}
 		}
 	}
 
@@ -133,35 +140,47 @@ public partial class ImageGen {
 	private void OnImageRequestCompleted(long result, long responseCode, string[] headers, byte[] body) {
 		httpBusy = false;
 		if (result != (long)HttpRequest.Result.Success || responseCode != 200) {
-			string responseBody = Encoding.UTF8.GetString(body);
-			if (FileAccess.FileExists(zipPath)) {
-				FileAccess fileAccess = FileAccess.Open(zipPath, FileAccess.ModeFlags.Read);
-				if (fileAccess.GetLength() < 1000) {
-					responseBody = fileAccess.GetAsText();
+			if (RetryCounter < 0) {
+				string responseBody = Encoding.UTF8.GetString(body);
+				if (FileAccess.FileExists(zipPath)) {
+					FileAccess fileAccess = FileAccess.Open(zipPath, FileAccess.ModeFlags.Read);
+					if (fileAccess.GetLength() < 1000) {
+						responseBody = fileAccess.GetAsText();
+					}
+					fileAccess.Close();
 				}
-				fileAccess.Close();
+				Game.CreateAlert("/api/generate-image" +
+					"\nHttpRequest Status: " + ((HttpRequest.Result)result).ToString() +
+					"\nResponse Code: " + responseCode.ToString() +
+					"\nResponse Body: " + responseBody);
+				SetStatus(false);
 			}
-			Game.CreateAlert("/api/generate-image" +
-				"\nHttpRequest Status: " + ((HttpRequest.Result)result).ToString() +
-				"\nResponse Code: " + responseCode.ToString() +
-				"\nResponse Body: " + responseBody);
-			SetStatus(false);
+			else {
+				GenerateImage(RerollIndex >= 0 ? RerollIndex : ImageIndex, RerollIndex >= 0);
+			}
 		}
 		else {
 			ZipReader reader = new();
 			Error error = reader.Open(zipPath);
 			if (error != Error.Ok) {
-				Game.CreateAlert("Unzip image generation download failed" +
+				if (RetryCounter < 0) {
+					Game.CreateAlert("Unzip image generation download failed" +
 					"\nError Code: " + error.ToString());
-				SetStatus(false);
+					SetStatus(false);
+				}
 			}
 			else {
 				byte[] imageBytes = reader.ReadFile("image_0.png");
 				reader.Close();
 				if (imageBytes == null || imageBytes.Length == 0) {
-					Game.CreateAlert("Unzipped PNG file read failed" +
+					if (RetryCounter < 0) {
+						Game.CreateAlert("Unzipped PNG file read failed" +
 						"\nError Code: " + error.ToString());
-					SetStatus(false);
+						SetStatus(false);
+					}
+					else {
+						GenerateImage(RerollIndex >= 0 ? RerollIndex : ImageIndex, RerollIndex >= 0);
+					}
 				}
 				else if (RerollIndex < 0) {
 					Images[ImageIndex] = new ImageContainer {
@@ -196,21 +215,32 @@ public partial class ImageGen {
 		var image = new Image();
 		Error error = image.LoadPngFromBuffer(Images[index].Bytes);
 		if (error != Error.Ok) {
-			Game.CreateAlert("Load byte buffer to PNG format failed" +
-				"\nError Code: " + error.ToString());
 			DeleteIndex(index);
-			SetStatus(false);
+			if (RetryCounter < 0) {
+				Game.CreateAlert("Load byte buffer to PNG format failed" +
+				"\nError Code: " + error.ToString());
+				SetStatus(false);
+			}
+			else {
+				GenerateImage(index, RerollIndex >= 0);
+			}
 		}
 		else {
 			var texture = ImageTexture.CreateFromImage(image);
 			if (texture == null) {
-				Game.CreateAlert("Convert loaded PNG to texture failed" +
-					"\nError Code: " + error.ToString());
 				DeleteIndex(index);
-				SetStatus(false);
+				if (RetryCounter < 0) {
+					Game.CreateAlert("Convert loaded PNG to texture failed" +
+					"\nError Code: " + error.ToString());
+					SetStatus(false);
+				}
+				else {
+					GenerateImage(index, RerollIndex >= 0);
+				}
 			}
 			else {
 				Images[index].Container.TextureRect.Texture = texture;
+				RetryCounter = 3;
 
 				if (RerollIndex < 0) {
 					ImageIndex++;
