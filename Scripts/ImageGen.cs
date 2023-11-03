@@ -248,7 +248,6 @@ public partial class ImageGen {
 						GenerateImage(ImageIndex);
 					}
 					else {
-						DisplayServer.WindowRequestAttention();
 						UpdateImageCounterLabel();
 						SetStatus(false);
 					}
@@ -322,6 +321,10 @@ public partial class ImageGen {
 		IsRunning = running;
 		((Button)Game.Instance.UI["Start_Button"]).Text = IsRunning ? "Pause" : "Start";
 		((Label)Game.UI["Loading_Label"]).Visible = running || httpBusy;
+
+		if (running == false) {
+			DisplayServer.WindowRequestAttention();
+		}
 	}
 
 	private void UpdateImageCounterLabel() {
