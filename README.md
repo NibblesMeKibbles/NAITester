@@ -1,6 +1,8 @@
 # NAI Tester
 NAI Tester is a standalone Godot (.NET) desktop game/app to streamline testing a list of tags into a **Prompt** and/or **Undesired Content** for NovelAI's image generator.
 
+**NOTE:** It is the user's responsibility to manage and monitor their **Anlas** credits spendage. Providing API payload configurations that would consume Anlas using the same configurations in the NovelAI image generator site will still consume Anlas.
+
 The [`config.json`](config.json) contains the base API payload information sent to each image generation API call, with the `input`, `negative_prompt` and `seed` properties being supplied values at runtime using the provided configurations of the in-game text fields.
 
 The `config.json` is copied from the application content to the user directory when the application is ran for the first time, and can be browsed to using the in-game "Open user directory" button (<img src="Icons/icons8-open-folder-in-new-tab-50.png" width="20">). The `config.json` can be modified in a text editor and reloaded in-game during runtime to instantly reflect any changes made.
