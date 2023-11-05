@@ -20,6 +20,8 @@ Adolph Gottlieb
 
 Result: 3 images will be generated with the following prompts: `1girl, {artist:Aaron Douglas}`, `1girl, {artist:Adam Martinakis}`, and `1girl, {artist:Adolph Gottlieb}`.
 
+Note that the **Tag List** does not need to strictly adhere to a single tag per line and can consist of any length of text.
+
 ## In-Game UI
 |Name|Icon|Functionality|
 |-|-|-|
