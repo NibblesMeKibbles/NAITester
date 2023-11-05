@@ -127,7 +127,7 @@ public partial class ImageGen {
 				Game.CreateAlert("Failed to send HttpRequest" +
 					"\nURI: /api/generate-iamge" +
 					"\nError Code: " + error.ToString());
-				SetStatus(false);
+				SetStatus(false, true);
 				httpBusy = false;
 			}
 			else {
@@ -153,7 +153,7 @@ public partial class ImageGen {
 					"\nHttpRequest Status: " + ((HttpRequest.Result)result).ToString() +
 					"\nResponse Code: " + responseCode.ToString() +
 					"\nResponse Body: " + responseBody);
-				SetStatus(false);
+				SetStatus(false, true);
 			}
 			else {
 				GenerateImage(RerollIndex >= 0 ? RerollIndex : ImageIndex, RerollIndex >= 0);
@@ -166,7 +166,7 @@ public partial class ImageGen {
 				if (RetryCounter < 0) {
 					Game.CreateAlert("Unzip image generation download failed" +
 					"\nError Code: " + error.ToString());
-					SetStatus(false);
+					SetStatus(false, true);
 				}
 			}
 			else {
@@ -176,7 +176,7 @@ public partial class ImageGen {
 					if (RetryCounter < 0) {
 						Game.CreateAlert("Unzipped PNG file read failed" +
 						"\nError Code: " + error.ToString());
-						SetStatus(false);
+						SetStatus(false, true);
 					}
 					else {
 						GenerateImage(RerollIndex >= 0 ? RerollIndex : ImageIndex, RerollIndex >= 0);
@@ -198,7 +198,7 @@ public partial class ImageGen {
 				else {
 					RerollIndex = -1;
 					UpdateImageCounterLabel();
-					SetStatus(false);
+					SetStatus(false, true);
 				}
 			}
 		}
@@ -219,7 +219,7 @@ public partial class ImageGen {
 			if (RetryCounter < 0) {
 				Game.CreateAlert("Load byte buffer to PNG format failed" +
 				"\nError Code: " + error.ToString());
-				SetStatus(false);
+				SetStatus(false, true);
 			}
 			else {
 				GenerateImage(index, RerollIndex >= 0);
@@ -232,7 +232,7 @@ public partial class ImageGen {
 				if (RetryCounter < 0) {
 					Game.CreateAlert("Convert loaded PNG to texture failed" +
 					"\nError Code: " + error.ToString());
-					SetStatus(false);
+					SetStatus(false, true);
 				}
 				else {
 					GenerateImage(index, RerollIndex >= 0);
@@ -249,13 +249,13 @@ public partial class ImageGen {
 					}
 					else {
 						UpdateImageCounterLabel();
-						SetStatus(false);
+						SetStatus(false, true);
 					}
 				}
 				else {
 					RerollIndex = -1;
 					UpdateImageCounterLabel();
-					SetStatus(false);
+					SetStatus(false, true);
 				}
 			}
 		}
@@ -317,12 +317,12 @@ public partial class ImageGen {
 		}
 	}
 
-	public void SetStatus(bool running) {
+	public void SetStatus(bool running, bool alert = false) {
 		IsRunning = running;
 		((Button)Game.Instance.UI["Start_Button"]).Text = IsRunning ? "Pause" : "Start";
 		((Label)Game.UI["Loading_Label"]).Visible = running || httpBusy;
 
-		if (running == false) {
+		if (running == false && alert == true) {
 			DisplayServer.WindowRequestAttention();
 		}
 	}
