@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://b62g6mkjugi1e"]
+[gd_scene load_steps=42 format=3 uid="uid://b62g6mkjugi1e"]
 
 [ext_resource type="Script" path="res://Scripts/Game.cs" id="1_3gakx"]
 [ext_resource type="Texture2D" uid="uid://cub64rkd4cynv" path="res://Black.png" id="2_ypjq3"]
@@ -7,9 +7,12 @@
 [ext_resource type="Script" path="res://Scripts_UI/Config_VBoxContainer.cs" id="5_jncee"]
 [ext_resource type="Script" path="res://Scripts_UI/ApiKey_LineEdit.cs" id="5_oiiut"]
 [ext_resource type="Script" path="res://Scripts_UI/Reset_ConfirmationDialog.cs" id="5_w5dvt"]
+[ext_resource type="Script" path="res://Scripts_UI/RemoveMode_Button.cs" id="6_7dbx1"]
+[ext_resource type="Script" path="res://Scripts_UI/VoteMode_Button.cs" id="7_0n82r"]
 [ext_resource type="Texture2D" uid="uid://37d2apnyks2x" path="res://Icons/icons8-reload-50.png" id="7_4figg"]
 [ext_resource type="Script" path="res://Scripts_UI/Columns_HSlider.cs" id="7_l8gak"]
 [ext_resource type="Texture2D" uid="uid://dd5f8smlehvew" path="res://Icons/icons8-open-folder-in-new-tab-50.png" id="7_ujtn7"]
+[ext_resource type="Script" path="res://Scripts_UI/SequenceMode_Button.cs" id="8_4mjnv"]
 [ext_resource type="Texture2D" uid="uid://cv8m6crbt1nae" path="res://Icons/icons8-reset-50.png" id="9_446a2"]
 [ext_resource type="Theme" uid="uid://dcgm5meb0p4vu" path="res://Theme.tres" id="10_1sbsf"]
 [ext_resource type="Texture2D" uid="uid://dwmk0uevtwxu2" path="res://Icons/icons8-fit-to-width-50.png" id="12_esa7y"]
@@ -19,6 +22,8 @@
 [ext_resource type="Script" path="res://Scripts_UI/Restart_Button.cs" id="20_20x1f"]
 [ext_resource type="Script" path="res://Scripts_UI/Reset_Button.cs" id="21_4va38"]
 [ext_resource type="Script" path="res://Scripts_UI/Open_Button.cs" id="23_oyhdt"]
+[ext_resource type="Script" path="res://Scripts_UI/ViewVotes_Button.cs" id="24_1besc"]
+[ext_resource type="Script" path="res://Scripts_UI/Votes_Window.cs" id="26_iqbrb"]
 [ext_resource type="Script" path="res://Scripts_UI/FullScreen_Button.cs" id="29_ieaqi"]
 [ext_resource type="Script" path="res://Scripts_UI/Exit_Button.cs" id="31_60yj0"]
 
@@ -105,6 +110,7 @@ offset_right = 8.0
 offset_bottom = 8.0
 grow_horizontal = 2
 size_flags_horizontal = 3
+tooltip_text = "Horizontal Resizer"
 theme = ExtResource("10_1sbsf")
 theme_override_styles/slider = SubResource("StyleBoxEmpty_sagrd")
 theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_12lyo")
@@ -142,6 +148,61 @@ offset_bottom = -8.0
 grow_horizontal = 0
 grow_vertical = 2
 script = ExtResource("5_jncee")
+
+[node name="Mode_HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Config_VBoxContainer"]
+layout_mode = 2
+
+[node name="Mode_Label" type="Label" parent="CanvasLayer/Config_VBoxContainer/Mode_HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Toggle between the various available Modes.
+
+Hover over each button for a description."
+mouse_filter = 1
+text = "Mode:"
+
+[node name="RemoveMode_Button" type="Button" parent="CanvasLayer/Config_VBoxContainer/Mode_HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Remove Mode
+
+Generate 1 image for each tag, using the same seed for all images.
+
+Use the Delete button on each image to both remove the image from the image grid and its tag from the Tag List.
+
+Great for quickly generating a batch of images and/or narrowing down a large number of tags."
+theme = ExtResource("10_1sbsf")
+toggle_mode = true
+button_pressed = true
+text = "Remove"
+script = ExtResource("6_7dbx1")
+
+[node name="VoteMode_Button" type="Button" parent="CanvasLayer/Config_VBoxContainer/Mode_HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Vote Mode
+
+Generate # images, each image using a random tag from the Tag List and a random seed.
+
+Use the vote buttons on each image to compile an unbiased rating (0-10) for each tag.
+
+After voting on enough images, a subjective rating can be viewed to identify a preferred or disliked tag."
+theme = ExtResource("10_1sbsf")
+toggle_mode = true
+text = "Vote"
+script = ExtResource("7_0n82r")
+
+[node name="SequenceMode_Button" type="Button" parent="CanvasLayer/Config_VBoxContainer/Mode_HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Sequence Mode
+
+Given 2-10 tags, each row of images use the same seed to create an ordered sequence per row.
+
+Creates image sequences with a unique seed per row for multiple sequences in a single execution."
+theme = ExtResource("10_1sbsf")
+toggle_mode = true
+text = "Sequence"
+script = ExtResource("8_4mjnv")
 
 [node name="ApiKey_LineEdit" type="LineEdit" parent="CanvasLayer/Config_VBoxContainer"]
 custom_minimum_size = Vector2(0, 25)
@@ -191,11 +252,50 @@ text = "3 Columns"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
+tooltip_text = "Number of image grid columns"
 min_value = 1.0
 max_value = 10.0
 value = 3.0
 rounded = true
 script = ExtResource("7_l8gak")
+
+[node name="ImagesCount_HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Config_VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="ImagesCount_Label" type="Label" parent="CanvasLayer/Config_VBoxContainer/ImagesCount_HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Number of total images to generate"
+mouse_filter = 1
+text = "Images Count"
+
+[node name="ImagesCount_LineEdit" type="LineEdit" parent="CanvasLayer/Config_VBoxContainer/ImagesCount_HBoxContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "20"
+max_length = 3
+clear_button_enabled = true
+select_all_on_focus = true
+
+[node name="Rows_HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Config_VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Rows_Label" type="Label" parent="CanvasLayer/Config_VBoxContainer/Rows_HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Number of rows to generate"
+mouse_filter = 1
+text = "Rows"
+
+[node name="Rows_LineEdit" type="LineEdit" parent="CanvasLayer/Config_VBoxContainer/Rows_HBoxContainer"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "5"
+max_length = 3
+clear_button_enabled = true
+select_all_on_focus = true
 
 [node name="Controls_HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Config_VBoxContainer"]
 layout_mode = 2
@@ -269,6 +369,7 @@ script = ExtResource("31_60yj0")
 
 [node name="Start_Button" type="Button" parent="CanvasLayer/Config_VBoxContainer"]
 layout_mode = 2
+tooltip_text = "Start or pause image generation"
 theme = ExtResource("10_1sbsf")
 text = "Start"
 script = ExtResource("18_vebud")
@@ -293,6 +394,8 @@ script = ExtResource("4_q00l3")
 [node name="Index_Label" type="Label" parent="CanvasLayer/Config_VBoxContainer/Status_HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+tooltip_text = "Number of load images / total images to generate"
+mouse_filter = 1
 text = "0 / 0"
 horizontal_alignment = 1
 
@@ -300,8 +403,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Reset config.json to default
-( Shortcuts: R )"
+tooltip_text = "Clear loaded images and reset to beginning"
 mouse_filter = 1
 theme = ExtResource("10_1sbsf")
 shortcut = SubResource("Shortcut_820ra")
@@ -310,6 +412,20 @@ text = "Restart"
 expand_icon = true
 script = ExtResource("20_20x1f")
 
+[node name="ViewVotes_Button" type="Button" parent="CanvasLayer/Config_VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Clear loaded images and reset to beginning"
+mouse_filter = 1
+theme = ExtResource("10_1sbsf")
+shortcut = SubResource("Shortcut_820ra")
+shortcut_in_tooltip = false
+text = "View Votes"
+expand_icon = true
+script = ExtResource("24_1besc")
+
 [node name="Reset_ConfirmationDialog" type="ConfirmationDialog" parent="CanvasLayer"]
 title = ""
 initial_position = 1
@@ -317,3 +433,24 @@ size = Vector2i(234, 100)
 popup_window = true
 dialog_text = "Reset config.json to default?"
 script = ExtResource("5_w5dvt")
+
+[node name="Votes_Window" type="Window" parent="CanvasLayer"]
+initial_position = 2
+size = Vector2i(400, 200)
+visible = false
+transient = true
+popup_window = true
+script = ExtResource("26_iqbrb")
+
+[node name="Votes_ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Votes_Window"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="Votes_VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Votes_Window/Votes_ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3

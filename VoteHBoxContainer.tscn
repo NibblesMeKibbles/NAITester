@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://mmg8wfspyrf1"]
+
+[ext_resource type="Script" path="res://Scripts_UI/VoteHBoxContainer.cs" id="1_gfl42"]
+[ext_resource type="Theme" uid="uid://dcgm5meb0p4vu" path="res://Theme.tres" id="2_jcs04"]
+
+[node name="Vote_HBoxContainer" type="HBoxContainer"]
+self_modulate = Color(1, 1, 1, 0.588235)
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 31.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_gfl42")
+
+[node name="Vote_LineEdit" type="LineEdit" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme = ExtResource("2_jcs04")
+theme_override_colors/font_uneditable_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+placeholder_text = "[ Tag ]"
+editable = false
+flat = true
+select_all_on_focus = true
+
+[node name="Vote_Button" type="Button" parent="."]
+custom_minimum_size = Vector2(32, 24)
+layout_mode = 2
+size_flags_horizontal = 8
+mouse_filter = 1
+shortcut_in_tooltip = false
+text = "#.#"
+expand_icon = true
