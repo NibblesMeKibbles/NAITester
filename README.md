@@ -22,10 +22,30 @@ Result: 3 images will be generated with the following prompts: `1girl, {artist:A
 
 Note that the **Tag List** does not need to strictly adhere to a single tag per line and can consist of any length of text.
 
+### Remove Mode
+Generate 1 image for each tag, using the same seed for all images.
+
+Use the Delete (<img src="Icons/icons8-delete-48.png" width="20">) button on each image to both remove the image from the image grid and its tag from the Tag List.
+
+Great for quickly generating a batch of images and/or narrowing down a large number of tags.
+
+### Vote Mode
+Generate # images, each image using a random tag from the Tag List and a random seed.
+
+Use the vote buttons (++, +, -, --) on each image to compile an unbiased rating (0-10) for each tag.
+
+After voting on enough images, a subjective rating can be viewed using the View Votes button to identify a preferred or disliked tag.
+
+### Sequence Mode
+Given 2-10 tags, each row of images use the same seed to create an ordered sequence per row.
+
+Creates image sequences with a unique seed per row for multiple sequences in a single execution.
+
 ## In-Game UI
 |Name|Icon|Functionality|
 |-|-|-|
 |Resize Slider||The knob at the top of the screen horizontally resizes the image grid|
+|Mode
 |NovelAI API Key||Text field for supplying a NovelAI API Key<br />Browse to NovelAI site > User Settings > Account > Get Persistent API Token|
 |||
 |Prompt||Text field of the base image generation **Prompt**|
