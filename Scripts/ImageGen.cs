@@ -52,13 +52,10 @@ public partial class ImageGen {
 		}
 	}
 
-	public void StartGeneration(bool resetIndex = true) {
+	public void StartGeneration() {
 		if (!((LineEdit)Game.Instance.UI["ApiKey_LineEdit"]).Text.Contains("pst")) {
 			Game.CreateAlert("No valid API Key was provided.");
 			return;
-		}
-		if (resetIndex && !httpBusy) {
-			ResetImages();
 		}
 		if (IsRunning) {
 			SetStatus(false);
