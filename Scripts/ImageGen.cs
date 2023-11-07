@@ -14,19 +14,30 @@ public partial class ImageGen {
 		public byte[] Bytes;
 		public ImagePanelContainer Container;
 	}
+	public class VoteContainer {
+		public string Tag;
+		public VoteHBoxContainer Container;
+	}
 
 	private readonly Game Game;
 
+	public int Mode = 0;
 	public bool IsRunning;
+	public bool IsFresh => !IsRunning && ImageIndex == 0 && !httpBusy;
 	public int ImageIndex = 0;
+	public string ImageTag = "";
+	public int TargetCount = 0;
 	public int RerollIndex = -1;
 	public int RetryCounter = 3;
 	public System.Collections.Generic.Dictionary<int, ImageContainer> Images = new();
+	public System.Collections.Generic.Dictionary<string, VoteContainer> Votes = new();
 
 	public string Prompt;
 	public string UndesiredContent;
 	public uint Seed;
+	public int Rows = 5;
 	public List<string> TagList = new();
+	public List<string> VoteRandomTagList = new();
 
 	public RandomNumberGenerator Random = new();
 
@@ -69,29 +80,66 @@ public partial class ImageGen {
 		Random.Randomize();
 		Prompt = ((TextEdit)Game.Instance.UI["Prompt_TextEdit"]).Text;
 		UndesiredContent = ((TextEdit)Game.Instance.UI["Undesired_TextEdit"]).Text;
-		Seed = string.IsNullOrWhiteSpace(((LineEdit)Game.Instance.UI["Seed_LineEdit"]).Text) ? Random.Randi(): Convert.ToUInt32(((LineEdit)Game.Instance.UI["Seed_LineEdit"]).Text);
-		((LineEdit)Game.Instance.UI["Seed_LineEdit"]).Text = Seed.ToString();
+		if (string.IsNullOrWhiteSpace(((LineEdit)Game.Instance.UI["Seed_LineEdit"]).Text)) {
+			RandomizeSeed();
+		}
+		else {
+			Seed = Convert.ToUInt32(((LineEdit)Game.Instance.UI["Seed_LineEdit"]).Text);
+		}
 		TagList = ((TextEdit)Game.Instance.UI["TagList_TextEdit"]).Text.Split("\n").ToList();
 
-		if (ImageIndex < TagList.Count) {
+		switch (Mode) {
+			case 0:
+				TargetCount = TagList.Count;
+				break;
+			case 1:
+				TargetCount = Convert.ToInt32(((LineEdit)Game.Instance.UI["ImagesCount_LineEdit"]).Text);
+				int tagRepetitions = TagList.Count == 0 ? 0 : (TargetCount + TagList.Count - 1) / TagList.Count;
+				for (int i = 0; i < TagList.Count; i++)
+					for (int j = 0; j < tagRepetitions; j++)
+						VoteRandomTagList.Add(TagList[i]);
+				break;
+			case 2:
+				if (TagList.Count > 10)
+					TagList.RemoveRange(10, TagList.Count - 10);
+				((GridContainer)Game.Instance.UI["Images_GridContainer"]).Columns = TagList.Count;
+				TargetCount = TagList.Count * Convert.ToInt32(((LineEdit)Game.Instance.UI["Rows_LineEdit"]).Text);
+				break;
+		}
+
+		if (ImageIndex < TargetCount) {
 			GenerateImage(ImageIndex);
 		}
 	}
 
+	public void RandomizeSeed() {
+		Seed = Random.Randi();
+		((LineEdit)Game.Instance.UI["Seed_LineEdit"]).Text = Seed.ToString();
+	}
+
 	public void ResetImages() {
 		ImageIndex = 0;
+		TargetCount = 0;
 		foreach (int index in Images.Keys) {
 			if (GodotObject.IsInstanceValid(Images[index].Container)) {
 				Images[index].Container?.QueueFree();
 			}
 		}
 		Images.Clear();
+		foreach (string tag in Votes.Keys) {
+			if (GodotObject.IsInstanceValid(Votes[tag].Container)) {
+				Votes[tag].Container?.QueueFree();
+			}
+		}
+		Votes.Clear();
+		SetStatus(false);
+		UpdateImageCounterLabel();
 	}
 
 	public void GenerateImage(int index, bool forceRandomSeed = false) {
 		if (!forceRandomSeed)
 			ImageIndex = index;
-		((Label)Game.UI["Index_Label"]).Text = index.ToString() + " / " + TagList.Count.ToString();
+		((Label)Game.UI["Index_Label"]).Text = index.ToString() + " / " + TargetCount.ToString();
 
 		Random.Randomize();
 		SetStatus(true);
@@ -102,9 +150,19 @@ public partial class ImageGen {
 			"Content-Type: application/json"
 		};
 
-		string thisTag = TagList[index];
-		string thisPrompt = Prompt.Replace("%TAG%", thisTag);
-		string thisUndesired = UndesiredContent.Replace("%TAG%", thisTag);
+		switch (Mode) {
+			case 0:
+				ImageTag = TagList[index];
+				break;
+			case 1:
+				ImageTag = GetRandomTag();
+				break;
+			case 2:
+				ImageTag = TagList[index % TagList.Count];
+				break;
+		}
+		string thisPrompt = Prompt.Replace("%TAG%", ImageTag);
+		string thisUndesired = UndesiredContent.Replace("%TAG%", ImageTag);
 		uint thisSeed = forceRandomSeed ? Random.Randi() : Seed;
 
 		if ((bool)((Dictionary)((Dictionary)Game.Config["ApiPayloadBody"])["parameters"])["qualityToggle"]) {
@@ -182,7 +240,7 @@ public partial class ImageGen {
 				else if (RerollIndex < 0) {
 					Images[ImageIndex] = new ImageContainer {
 						Index = ImageIndex,
-						Tag = TagList[ImageIndex],
+						Tag = ImageTag,
 						Bytes = imageBytes,
 						Container = CreateImageContainer(ImageIndex)
 					};
@@ -204,7 +262,13 @@ public partial class ImageGen {
 	private ImagePanelContainer CreateImageContainer(int index) {
 		ImagePanelContainer container = (ImagePanelContainer)GD.Load<PackedScene>("res://ImagePanelContainer.tscn").Instantiate();
 		((GridContainer)Game.UI["Images_GridContainer"]).AddChild(container);
-		container.Initialize(index, TagList[index]);
+		container.Initialize(index, ImageTag, Mode);
+		return container;
+	}
+	private VoteHBoxContainer CreateVoteContainer(string tag, int vote) {
+		VoteHBoxContainer container = (VoteHBoxContainer)GD.Load<PackedScene>("res://VoteHBoxContainer.tscn").Instantiate();
+		((VBoxContainer)Game.UI["Votes_VBoxContainer"]).AddChild(container);
+		container.Initialize(tag, vote);
 		return container;
 	}
 
@@ -241,7 +305,21 @@ public partial class ImageGen {
 
 				if (RerollIndex < 0) {
 					ImageIndex++;
-					if (IsRunning && ImageIndex < TagList.Count) {
+					if (IsRunning && ImageIndex < TargetCount) {
+						switch (Mode) {
+							case 0:
+								// Remove: always same seed
+								break;
+							case 1:
+								// Vote: random every image
+								RandomizeSeed();
+								break;
+							case 2:
+								// Compare: random every row
+								if (ImageIndex % TagList.Count == 0)
+									RandomizeSeed();
+								break;
+						}
 						GenerateImage(ImageIndex);
 					}
 					else {
@@ -302,16 +380,37 @@ public partial class ImageGen {
 		Game.CreatePopup("Succesfully saved image.\nFile Path: " + pngName);
 	}
 
-	public void DeleteIndex(int index) {
+	public void DeleteIndex(int index, bool modifyTagList = true) {
 		if (Images.ContainsKey(index)) {
-			List<string> tagList = ((TextEdit)Game.Instance.UI["TagList_TextEdit"]).Text.Split("\n").ToList();
-			if (tagList.Remove(Images[index].Tag)) {
-				((TextEdit)Game.Instance.UI["TagList_TextEdit"]).Text = tagList.ToArray().Join("\n");
+			if (modifyTagList) {
+				List<string> tagList = ((TextEdit)Game.Instance.UI["TagList_TextEdit"]).Text.Split("\n").ToList();
+				if (tagList.Remove(Images[index].Tag)) {
+					((TextEdit)Game.Instance.UI["TagList_TextEdit"]).Text = tagList.ToArray().Join("\n");
+				}
 			}
 			Images[index].Container?.QueueFree();
 			Images.Remove(index);
 			UpdateImageCounterLabel();
 		}
+	}
+
+	public void VoteTag(int index, string tag, int vote) {
+		if (Votes.ContainsKey(tag))
+			Votes[tag].Container.Vote(vote);
+		else
+			Votes[tag] = new VoteContainer {
+				Tag = ImageTag,
+				Container = CreateVoteContainer(tag, vote)
+			};
+
+		DeleteIndex(index, false);
+	}
+
+	private string GetRandomTag() {
+		int index = Random.RandiRange(0, VoteRandomTagList.Count - 1);
+		string tag = VoteRandomTagList[index];
+		VoteRandomTagList.RemoveAt(index);
+		return tag;
 	}
 
 	public void SetStatus(bool running, bool alert = false) {
@@ -325,6 +424,6 @@ public partial class ImageGen {
 	}
 
 	private void UpdateImageCounterLabel() {
-		((Label)Game.UI["Index_Label"]).Text = ImageIndex.ToString() + " / " + TagList.Count.ToString();
+		((Label)Game.UI["Index_Label"]).Text = ImageIndex.ToString() + " / " + TargetCount.ToString();
 	}
 }

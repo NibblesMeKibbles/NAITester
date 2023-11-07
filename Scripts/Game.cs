@@ -38,21 +38,26 @@ public partial class Game : Node2D {
 		}
 	}
 
-	public static string GetUserConfigProperty(string pattern) {
-		if (!FileAccess.FileExists(userConfigPath)) {
-			return null;
+	public void SwitchMode(int mode) {
+		if (ImageGen.IsRunning) {
+			CreateAlert("Stop and restart prior to switching modes.");
 		}
-		FileAccess file = FileAccess.Open(userConfigPath, FileAccess.ModeFlags.Read);
-		string content = file.GetAsText();
-		file.Close();
-		file.Dispose();
+		else if (!ImageGen.IsFresh) {
+			CreateAlert("Restart prior to switching modes.");
+		}
+		else {
+			ImageGen.Mode = mode;
+		}
 
-		RegEx reg = RegEx.CreateFromString(pattern);
-		RegExMatch match = reg.Search(content);
-		if (match != null) {
-			return match.Strings[0];
-		}
-		return null;
+		((Button)UI["RemoveMode_Button"]).SetPressedNoSignal(ImageGen.Mode == 0);
+		((Button)UI["VoteMode_Button"]).SetPressedNoSignal(ImageGen.Mode == 1);
+		((Button)UI["SequenceMode_Button"]).SetPressedNoSignal(ImageGen.Mode == 2);
+
+		((HBoxContainer)UI["Columns_HBoxContainer"]).Visible = ImageGen.Mode == 0 || ImageGen.Mode == 1;
+		((HBoxContainer)UI["ImagesCount_HBoxContainer"]).Visible = ImageGen.Mode == 1;
+		((HBoxContainer)UI["Rows_HBoxContainer"]).Visible = ImageGen.Mode == 2;
+
+		((Button)UI["ViewVotes_Button"]).Visible = ImageGen.Mode == 1;
 	}
 
 	public void LoadConfigJson(bool forceReset = false) {
