@@ -114,11 +114,6 @@ public partial class Game : Node2D {
 		}
 	}
 
-	public void EnableControls() {
-		((Button)UI["Pause_Button"]).Disabled = false;
-		((HSlider)UI["Lewd_HSlider"]).Editable = true;
-	}
-
 	public void CreateAlert(string message) {
 		AcceptDialog acceptDialog = new();
 		((CanvasLayer)UI["CanvasLayer"]).AddChild(acceptDialog);
