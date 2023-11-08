@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace NAITester;
 public partial class ImageGen {
@@ -349,7 +350,7 @@ public partial class ImageGen {
 		GenerateImage(index, true);
 	}
 
-	public void SaveImage(int index) {
+	public void SaveImage(int index, bool createPopup = true) {
 		if (!DirAccess.DirExistsAbsolute(ProjectSettings.GlobalizePath(Game.imagesRootPath))) {
 			Error error = DirAccess.MakeDirAbsolute(ProjectSettings.GlobalizePath(Game.imagesRootPath));
 			if (error != Error.Ok) {
@@ -359,7 +360,10 @@ public partial class ImageGen {
 				return;
 			}
 		}
-		string pngName = Godot.Time.GetDatetimeStringFromSystem().Replace(':', '-').Replace('T', '-') + "_" + Images[index].Tag + ".png";
+		string cleanTag = new Regex("^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\|,.<>\\/?]*$").Replace(Images[index].Tag, "");
+		if (cleanTag.Length > 60)
+			cleanTag = cleanTag.Substr(0, 60);
+		string pngName = Godot.Time.GetDatetimeStringFromSystem().Replace(':', '-').Replace('T', '-') + "_" + index.ToString() + "_" + cleanTag + ".png";
 		string filePath = Game.imagesRootPath + "Image_" + pngName;
 		FileAccess file = FileAccess.Open(filePath, FileAccess.ModeFlags.Write);
 		if (file == null) {
@@ -377,7 +381,17 @@ public partial class ImageGen {
 		}
 		file.StoreBuffer(Images[index].Bytes);
 		file.Close();
-		Game.CreatePopup("Succesfully saved image.\nFile Path: " + pngName);
+		if (createPopup)
+			Game.CreatePopup("Succesfully saved image.\nFile Path: " + pngName);
+	}
+
+	public void SaveAllImages() {
+		foreach (int index in Images.Keys) {
+			if (Images[index].Bytes != null && Images[index].Bytes.Length > 0) {
+				SaveImage(index, false);
+			}
+		}
+		Game.CreatePopup("Succesfully saved all " + Images.Keys.Count.ToString() + " images.");
 	}
 
 	public void DeleteIndex(int index, bool modifyTagList = true) {

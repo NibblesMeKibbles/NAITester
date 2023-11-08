@@ -57,6 +57,7 @@ Creates image sequences with a unique seed per row for multiple sequences in a s
 |Reload config.json|<img src="Icons/icons8-reload-50.png" width="20">|Re-import the user folder `config.json` and its configurations|
 |Reset config.json to default|<img src="Icons/icons8-reset-50.png" width="20">|Restore the user `config.json` to the default resource `config.json` contents|
 |Open user directory|<img src="Icons/icons8-open-folder-in-new-tab-50.png" width="20">|Open a shell window to the user directory that contains the local `config.json`, `README.md`, and any `/SavedImages/`|
+|Save all images|<img src="Icons/icons8-save-50.png" width="20">|Save all visible images to `/SavedImages/` in a timestamped `.png` file with full NovelAI metadata|
 |Toggle FullScreen Mode|<img src="Icons/icons8-fit-to-width-50.png" width="20">|Switch between Windows and FullScreen display mode|
 |Exit to Desktop|<img src="Icons/icons8-quit-50.png" width="20">|Quit the game|
 ||||
@@ -66,7 +67,7 @@ Creates image sequences with a unique seed per row for multiple sequences in a s
 ||||
 |Tag Label||The tag used for the loaded image|
 |Reroll tag with new seed|<img src="Icons/icons8-reload-50.png" width="20">|Replace the image with a new generation, using the same tag with a new random seed|
-|Save image (with metadata)|<img src="Icons/icons8-save-50.png" width="20">|Save the image to a timestamped `.png` file with full NovelAI metadata|
+|Save image (with metadata)|<img src="Icons/icons8-save-50.png" width="20">|Save the image to `/SavedImages/` in a timestamped `.png` file with full NovelAI metadata|
 |Delete image and remove tag from Tag List|<img src="Icons/icons8-delete-48.png" width="20">|Delete the loaded image from the image grid and remove the image's tag from the **Tag List** text field|
 
 ## Modifying the API Payload
