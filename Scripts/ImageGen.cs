@@ -100,8 +100,8 @@ public partial class ImageGen {
 						VoteRandomTagList.Add(TagList[i]);
 				break;
 			case 2:
-				if (TagList.Count > 10)
-					TagList.RemoveRange(10, TagList.Count - 10);
+				if (TagList.Count > 20)
+					TagList.RemoveRange(20, TagList.Count - 20);
 				((GridContainer)Game.Instance.UI["Images_GridContainer"]).Columns = TagList.Count;
 				TargetCount = TagList.Count * Convert.ToInt32(((LineEdit)Game.Instance.UI["Rows_LineEdit"]).Text);
 				break;
