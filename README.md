@@ -45,7 +45,7 @@ Creates image sequences with a unique seed per row for multiple sequences in a s
 |Name|Icon|Functionality|
 |-|-|-|
 |Resize Slider||The knob at the top of the screen horizontally resizes the image grid|
-|Mode
+|Mode||Select which image generation mode to use: Remove Mode, Vote Mode, or Sequence Mode|
 |NovelAI API Key||Text field for supplying a NovelAI API Key<br />Browse to NovelAI site > User Settings > Account > Get Persistent API Token|
 |||
 |Prompt||Text field of the base image generation **Prompt**|
@@ -69,6 +69,7 @@ Creates image sequences with a unique seed per row for multiple sequences in a s
 |Reroll tag with new seed|<img src="Icons/icons8-reload-50.png" width="20">|Replace the image with a new generation, using the same tag with a new random seed|
 |Save image (with metadata)|<img src="Icons/icons8-save-50.png" width="20">|Save the image to `/SavedImages/` in a timestamped `.png` file with full NovelAI metadata|
 |Delete image and remove tag from Tag List|<img src="Icons/icons8-delete-48.png" width="20">|Delete the loaded image from the image grid and remove the image's tag from the **Tag List** text field|
+|Reveal/hide this image's tag|<img src="Icons/icons8-hide-50.png" width="20">|During Vote Mode, toggle the visibility of the image's tag label|
 
 ## Modifying the API Payload
 The base API payload is visible in the [`config.json`](config.json) file. To assuredly modify values (such as `model` name): open the NovelAI image generator website in the browser, select your preferred image and model settings, open the Developer Tools (F12?), open the Network tab, and generate an image using normal means. The Network tab will add a line with the name `/api/generate-image` (or just `generate-image`), select that API call, select the Payload tab, and copy desired values to the `config.json`.
