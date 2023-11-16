@@ -1,5 +1,5 @@
 {
-	"QualityToggle": "very aesthetic, best quality, absurdres, ",
+	"QualityToggle": ", very aesthetic, best quality, absurdres",
 	"UCPresets": [
 		"lowres, bad, text, error, missing, extra, fewer, cropped, jpeg artifacts, worst quality, bad quality, watermark, displeasing, unfinished, chromatic aberration, scan, scan artifacts, ",
 		"lowres, jpeg artifacts, worst quality, watermark, blurry, very displeasing, ",
@@ -7,14 +7,14 @@
 	],
 	"ApiPayloadBody": {
 		"input": "%INPUT_PROMPT%",
-		"model": "nai-diffusion-2",
+		"model": "nai-diffusion-3",
 		"action": "generate",
 		"parameters": {
 			"negative_prompt": "%NEGATIVE_PROMPT%",
 			"width": 1024,
 			"height": 1024,
 			"steps": 28,
-			"scale": 13,
+			"scale": 5,
 			"seed": 0,
 			"sampler": "k_euler_ancestral",
 			"sm": true,
@@ -22,7 +22,9 @@
 			"controlnet_strength": 1,
 			"n_samples": 1,
 			"ucPreset": 0,
+			"csf_rescale": 0,
 			"uncond_scale": 1,
+			"noise_schedule": "native",
 			"qualityToggle": true,
 			"add_original_image": false,
 			"dynamic_thresholding": false,

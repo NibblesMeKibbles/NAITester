@@ -170,7 +170,7 @@ public partial class ImageGen {
 		uint thisSeed = forceRandomSeed ? Random.Randi() : Seed;
 
 		if ((bool)((Dictionary)((Dictionary)Game.Config["ApiPayloadBody"])["parameters"])["qualityToggle"]) {
-			thisPrompt = ((string)Game.Config["QualityToggle"]) + thisPrompt;
+			thisPrompt += ((string)Game.Config["QualityToggle"]);
 		}
 		thisUndesired = ((string[])Game.Config["UCPresets"])[(int)((Dictionary)((Dictionary)Game.Config["ApiPayloadBody"])["parameters"])["ucPreset"]] + thisUndesired;
 
