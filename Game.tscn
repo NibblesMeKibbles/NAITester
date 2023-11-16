@@ -409,12 +409,25 @@ script = ExtResource("4_q00l3")
 [node name="Index_Label" type="Label" parent="CanvasLayer/Config_VBoxContainer/Status_HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
 tooltip_text = "Number of load images / total images to generate"
 mouse_filter = 1
-text = "0 / 0"
+text = "0 / 0
+"
 horizontal_alignment = 1
 
-[node name="Restart_Button" type="Button" parent="CanvasLayer/Config_VBoxContainer/Status_HBoxContainer"]
+[node name="ETA_Label" type="Label" parent="CanvasLayer/Config_VBoxContainer/Status_HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+tooltip_text = "Number of seconds remaining"
+mouse_filter = 1
+text = "--"
+horizontal_alignment = 1
+
+[node name="Restart_Button" type="Button" parent="CanvasLayer/Config_VBoxContainer"]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_horizontal = 3

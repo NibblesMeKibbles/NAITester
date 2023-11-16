@@ -44,6 +44,9 @@ public partial class ImageGen {
 
 	private readonly HttpRequest httpRequestImage;
 	private bool httpBusy = false;
+	private ulong httpStartTime;
+	private readonly List<double> imageGenTimes = new();
+
 	private readonly string zipPath = Game.userRootPath + "images.zip";
 
 	public ImageGen(Game game) {
@@ -177,6 +180,7 @@ public partial class ImageGen {
 		string body = Json.Stringify((Dictionary)Game.Config["ApiPayloadBody"]);
 
 		httpBusy = true;
+		httpStartTime = Time.GetTicksMsec();
 		Error error = httpRequestImage.Request(Game.ApiImage, headers, HttpClient.Method.Post, body);
 		if (error != Error.Ok) {
 			if (RetryCounter < 0) {
@@ -195,6 +199,7 @@ public partial class ImageGen {
 	// HttpRequest byte stream is in x-zip-compress format, save to .zip, then unzip the .png
 	private void OnImageRequestCompleted(long result, long responseCode, string[] headers, byte[] body) {
 		httpBusy = false;
+		UpdateETA();
 		if (result != (long)HttpRequest.Result.Success || responseCode != 200) {
 			if (RetryCounter < 0) {
 				string responseBody = Encoding.UTF8.GetString(body);
@@ -439,5 +444,15 @@ public partial class ImageGen {
 
 	private void UpdateImageCounterLabel() {
 		((Label)Game.UI["Index_Label"]).Text = ImageIndex.ToString() + " / " + TargetCount.ToString();
+	}
+
+	private void UpdateETA() {
+		imageGenTimes.Add((Time.GetTicksMsec() - httpStartTime) / 1000.0);
+		if (imageGenTimes.Count > 10)
+			imageGenTimes.RemoveAt(0);
+		if (TargetCount - ImageIndex - 1 <= 0)
+			((Label)Game.UI["ETA_Label"]).Text = "--";
+		else
+			((Label)Game.UI["ETA_Label"]).Text = "ETA: ~" + (imageGenTimes.Sum() * (TargetCount - ImageIndex - 1) / imageGenTimes.Count).ToString("0") + "s";
 	}
 }
