@@ -1,7 +1,7 @@
 {
-	"QualityToggle": ", very aesthetic, best quality, absurdres",
+	"QualityToggle": ", best quality, amazing quality, very aesthetic, absurdres",
 	"UCPresets": [
-		"lowres, bad, text, error, missing, extra, fewer, cropped, jpeg artifacts, worst quality, bad quality, watermark, displeasing, unfinished, chromatic aberration, scan, scan artifacts, ",
+		"lowres, {bad}, text, error, missing, extra, fewer, cropped, jpeg artifacts, worst quality, bad quality, watermark, displeasing, unfinished, chromatic aberration, scan, scan artifacts, ",
 		"lowres, jpeg artifacts, worst quality, watermark, blurry, very displeasing, ",
 		""
 	],
@@ -16,13 +16,13 @@
 			"steps": 28,
 			"scale": 5,
 			"seed": 0,
-			"sampler": "k_euler_ancestral",
+			"sampler": "k_euler",
 			"sm": true,
 			"sm_dyn": true,
 			"controlnet_strength": 1,
 			"n_samples": 1,
 			"ucPreset": 0,
-			"csf_rescale": 0,
+			"cfg_rescale": 0,
 			"uncond_scale": 1,
 			"noise_schedule": "native",
 			"qualityToggle": true,
