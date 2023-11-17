@@ -454,9 +454,12 @@ public partial class ImageGen {
 		imageGenTimes.Add((Time.GetTicksMsec() - httpStartTime) / 1000.0);
 		if (imageGenTimes.Count > 10)
 			imageGenTimes.RemoveAt(0);
-		if (TargetCount - ImageIndex - 1 <= 0)
+		if (TargetCount - ImageIndex - 1 <= 0) {
 			((Label)Game.UI["ETA_Label"]).Text = "--";
-		else
-			((Label)Game.UI["ETA_Label"]).Text = "ETA: ~" + (imageGenTimes.Sum() * (TargetCount - ImageIndex - 1) / imageGenTimes.Count).ToString("0") + "s";
+		}
+		else {
+			int eta = (int)(imageGenTimes.Sum() * (TargetCount - ImageIndex - 1) / imageGenTimes.Count);
+			((Label)Game.UI["ETA_Label"]).Text = "ETA: " + (eta / 3600).ToString("00") + ":" + ((eta % 3600) / 60).ToString("00") + ":" + (eta % 60).ToString("00");
+		}
 	}
 }
