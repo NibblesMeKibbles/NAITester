@@ -216,6 +216,10 @@ public partial class ImageGen {
 					"\nResponse Body: " + responseBody);
 				SetStatus(false, true);
 			}
+			else if (responseCode == 0 && (HttpRequest.Result)result == HttpRequest.Result.ConnectionError) {
+				httpRequestImage.CancelRequest();
+				GenerateImage(RerollIndex >= 0 ? RerollIndex : ImageIndex, RerollIndex >= 0);
+			}
 			else {
 				GenerateImage(RerollIndex >= 0 ? RerollIndex : ImageIndex, RerollIndex >= 0);
 			}
