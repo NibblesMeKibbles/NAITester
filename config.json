@@ -1,8 +1,8 @@
 {
 	"QualityToggle": ", best quality, amazing quality, very aesthetic, absurdres",
 	"UCPresets": [
-		"lowres, {bad}, text, error, missing, extra, fewer, cropped, jpeg artifacts, worst quality, bad quality, watermark, displeasing, unfinished, chromatic aberration, scan, scan artifacts, ",
-		"lowres, jpeg artifacts, worst quality, watermark, blurry, very displeasing, ",
+		"nsfw, lowres, {bad}, error, fewer, extra, missing, worst quality, jpeg artifacts, bad quality, watermark, unfinished, displeasing, chromatic aberration, signature, extra digits, artistic error, username, scan, [abstract], ",
+		"nsfw, lowres, jpeg artifacts, worst quality, watermark, blurry, very displeasing, ",
 		""
 	],
 	"ApiPayloadBody": {
