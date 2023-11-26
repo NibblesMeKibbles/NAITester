@@ -5,7 +5,7 @@ NAI Tester is a standalone Godot (.NET) desktop game/app to streamline testing a
 
 The [`config.json`](config.json) contains the base API payload information sent to each image generation API call, with the `input`, `negative_prompt` and `seed` properties being supplied values at runtime using the provided configurations of the in-game text fields.
 
-The `config.json` is copied from the application content to the user directory when the application is ran for the first time, and can be browsed to using the in-game "Open user directory" button (<img src="Icons/icons8-open-folder-in-new-tab-50.png" width="20">). The `config.json` can be modified in a text editor and reloaded in-game during runtime to instantly reflect any changes made.
+The `config.json` is copied from the application content to the user directory when the application is ran for the first time, and can be browsed to using the in-game "Open user directory" button (<img src="Icons/icons8-open-folder-in-new-tab-50.png" width="20">). The `config.json` can be modified in a text editor and reloaded (<img src="Icons/icons8-reload-50.png" width="20">) in-game during runtime to instantly reflect any changes made.
 
 ## Functionality
 Provide a **Prompt** and **Undesired Content** in the appropriate text fields, **either or both** of the fields should contain the text: **`%TAG%`**. Given a list of tags (split by new lines) in the **Tag List** field, iterate over each tag to replace the string `%TAG%` with the tag to provide a series of images with variations according to the tag replacement text.
@@ -37,7 +37,7 @@ Use the vote buttons (++, +, -, --) on each image to compile an unbiased rating 
 After voting on enough images, a subjective rating can be viewed using the View Votes button to identify a preferred or disliked tag.
 
 ### Sequence Mode
-Given 2-10 tags, each row of images use the same seed to create an ordered sequence per row.
+Given 2-20 tags, each row of images use the same seed to create an ordered sequence per row.
 
 Creates image sequences with a unique seed per row for multiple sequences in a single execution.
 
@@ -63,17 +63,18 @@ Creates image sequences with a unique seed per row for multiple sequences in a s
 ||||
 |Start/Pause||Start or pause the image generation, resuming from the last generated image|
 |#/#||Number of current images loaded versus number of total tags provided|
+|ETA: ##:##:##||Estimated time remaining until all queued images are generated, in Hours : Minutes : Seconds format|
 |Restart||Clear all loaded images and restart image generation from the first tag|
 ||||
 |Tag Label||The tag used for the loaded image|
 |Reroll tag with new seed|<img src="Icons/icons8-reload-50.png" width="20">|Replace the image with a new generation, using the same tag with a new random seed|
 |Save image (with metadata)|<img src="Icons/icons8-save-50.png" width="20">|Save the image to `/SavedImages/` in a timestamped `.png` file with full NovelAI metadata|
-|Delete image and remove tag from Tag List|<img src="Icons/icons8-delete-48.png" width="20">|Delete the loaded image from the image grid and remove the image's tag from the **Tag List** text field|
+|Delete image and remove tag from Tag List|<img src="Icons/icons8-delete-48.png" width="20">|During Remove Mode, delete the loaded image from the image grid and remove the image's tag from the **Tag List** text field|
 |Reveal/hide this image's tag|<img src="Icons/icons8-hide-50.png" width="20">|During Vote Mode, toggle the visibility of the image's tag label|
 
 ## Modifying the API Payload
 The base API payload is visible in the [`config.json`](config.json) file. To assuredly modify values (such as `model` name): open the NovelAI image generator website in the browser, select your preferred image and model settings, open the Developer Tools (F12?), open the Network tab, and generate an image using normal means. The Network tab will add a line with the name `/api/generate-image` (or just `generate-image`), select that API call, select the Payload tab, and copy desired values to the `config.json`.
 
 The following two functionality are existing logic of the NovelAI image generation in the web browser:
-- The `qualityToggle` property determines whether the `QualityToggle` list of tags should be prepended to the `input` prompt.
+- The `qualityToggle` property determines whether the `QualityToggle` list of tags should be appended to the `input` prompt.
 - The `ucPreset` property is a value of 0, 1, or 2 to determine which index of the `UCPresets` array should be prepended to the `negative_prompt`.
