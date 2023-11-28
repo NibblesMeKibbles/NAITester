@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://b18ocpp5b3mbv"]
+
+[node name="HTTPRequest" type="HTTPRequest"]
+timeout = 45.0
+
+[node name="@Timer@22253" type="Timer" parent="."]
+one_shot = true

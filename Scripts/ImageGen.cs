@@ -42,7 +42,7 @@ public partial class ImageGen {
 
 	public RandomNumberGenerator Random = new();
 
-	private readonly HttpRequest httpRequestImage;
+	private HttpRequest httpRequestImage;
 	private bool httpBusy = false;
 	private ulong httpStartTime;
 	private readonly List<double> imageGenTimes = new();
@@ -53,18 +53,23 @@ public partial class ImageGen {
 		Game = game;
 		zipPath = Game.userRootPath + "images-" + Random.Randi() + ".zip";
 
-		httpRequestImage = (HttpRequest)Game.UI["HTTPRequest_Image"];
-		httpRequestImage.DownloadFile = zipPath;
-		httpRequestImage.RequestCompleted += OnImageRequestCompleted;
-		httpRequestImage.Timeout = 25.0;
+		CleanUp();
 	}
 
 	public void CleanUp() {
-		httpRequestImage.CancelRequest();
 		if (FileAccess.FileExists(zipPath)) {
 			DirAccess dir = DirAccess.Open(Game.userRootPath);
 			dir.Remove(zipPath);
 		}
+
+		httpRequestImage?.CancelRequest();
+		httpRequestImage?.QueueFree();
+
+		httpRequestImage = (HttpRequest)GD.Load<PackedScene>("res://HttpRequest.tscn").Instantiate();
+		Game.Instance.AddChild(httpRequestImage);
+
+		httpRequestImage.DownloadFile = zipPath;
+		httpRequestImage.RequestCompleted += OnImageRequestCompleted;
 	}
 
 	public void StartGeneration() {
@@ -216,8 +221,9 @@ public partial class ImageGen {
 					"\nResponse Body: " + responseBody);
 				SetStatus(false, true);
 			}
+			// Handle invalid http chunk size error
 			else if (responseCode == 0 && (HttpRequest.Result)result == HttpRequest.Result.ConnectionError) {
-				httpRequestImage.CancelRequest();
+				CleanUp();
 				GenerateImage(RerollIndex >= 0 ? RerollIndex : ImageIndex, RerollIndex >= 0);
 			}
 			else {
@@ -369,7 +375,7 @@ public partial class ImageGen {
 				return;
 			}
 		}
-		string cleanTag = new Regex("^[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};':\"\\|,.<>\\/?]*$").Replace(Images[index].Tag, "");
+		string cleanTag = new Regex("[^a-zA-Z0-9!@#$%^&()_+\\-=\\[\\]{};',.]+").Replace(Images[index].Tag, "");
 		if (cleanTag.Length > 60)
 			cleanTag = cleanTag.Substr(0, 60);
 		string pngName = Godot.Time.GetDatetimeStringFromSystem().Replace(':', '-').Replace('T', '-') + "_" + index.ToString() + "_" + cleanTag + ".png";
